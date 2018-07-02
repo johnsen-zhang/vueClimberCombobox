@@ -6,32 +6,31 @@
  参数名 | 参数类型 | 描述 | 默认值 
  :-: | :-: | :-: | :-: 
 title | String | 下拉框标题 | 下拉框 
-haveAllItem | Boolean | 是否显示全部选项 | true
-haveMoreItem | Boolean | 是否显示更多选项 | false
+haveAllItem | Boolean | 是否显示全部选项 | true
+haveMoreItem | Boolean | 是否显示更多选项 | false
 search | Boolean | 是否支持模糊查询 | false
 defaultIndex | Number | 默认选中项 | 0
 
-# 函数说明
+# 函数说明
 函数名 | 参数列表 | 描述
 :-: | :-: | :-:
 currVal | textVal | 设置文本框显示内容
 hideList | - | 隐藏下拉列表
 
 # 事件
-事件名称 | 描述 | 传递参数列表 | 参数说明
+事件名称 | 描述 | 传递参数列表 | 参数说明
 :-: | :-: | :-: | :-:
 default-item | 初始化选中默认值选项 | data.itemIndex | 默认选中索引
-change-val | 检索内容变更 | data | 检索内容
+change-val | 检索内容变更 | data | 检索内容
 select-all | 选中全部选项 | - | - 
 select-more | 选中更多选项 | - | -
 
 # 插槽
-插槽名称 | 插槽说明
+插槽名称 | 插槽说明
 :-: | :-:
 comboboxItems | 下拉列表选项内容使用li标签
 
 ## 如何安装
-
 ``` bash
 # install dependencies
 npm install vue-climber-combobox
@@ -40,10 +39,10 @@ npm install vue-climber-combobox
 ``` html
 <template>
     ···
-    <cb-combobox ref="cmb1" :search="c1Search" :title="c1Title" :have-all-item="c1ShowAll" :have-more-item="c1ShowMore" v-on:select-all="c1SelectAll" v-on:select-more="c1SelectMore" v-on:change-val="c1ChangeVal">
-        <li slot="comboboxItems" v-for="(item,index) in cmb1Datas" v-show="item.en.indexOf(c1Text) >= 0 || item.cn.indexOf(c1Text) >= 0 || (item.cn + ' : ' + item.en) == c1Text" :key="index" @click="cmb1ItemClick">
-        <label>{{item.cn}} : {{item.en}}</label>
-      </li>
+    <cb-combobox data-id="cmb1" ref="cmb1" :default-index="c1Default" :search="c1Search" :title="c1Title" :have-all-item="c1ShowAll" :have-more-item="c1ShowMore" v-on:select-all="c1SelectAll" v-on:select-more="c1SelectMore" v-on:change-val="c1ChangeVal" v-on:default-item="c1DefaultItem">
+        <li data-item-index="index" slot="comboboxItems" v-for="(item,index) in cmb1Datas" v-show="item.en.indexOf(c1Text) >= 0 || item.cn.indexOf(c1Text) >= 0 || (item.cn + ' : ' + item.en) == c1Text" :key="index" @click="cmb1ItemClick">
+          <label>{{item.cn}} : {{item.en}}</label>
+        </li>
     </cb-combobox>
     ···
 </template>
@@ -59,6 +58,7 @@ npm install vue-climber-combobox
                 c1ShowAll: true,
                 c1ShowMore: true,
                 c1Text: '',
+                c1Default: 1,
                 cmb1Datas: [
                     {'cn':'脾气','en':'temper'},
                     {'cn':'发脾气','en':'lose one\'s temper'},
@@ -192,7 +192,8 @@ npm install vue-climber-combobox
             CbCombobox
         },
         methods: {
-            c1ShowAll (){
+            c1SelectAll (){
+                this.c1Text = ''
                 alert('选择了全部选项')
             },
             c1SelectMore (){
@@ -203,8 +204,17 @@ npm install vue-climber-combobox
             },
             cmb1ItemClick (evt){
                 const target = evt.currentTarget
+                this.c1Text = target.querySelector('label').innerText;
                 this.$refs.cmb1.hideList()
-                this.$refs.cmb1.currVal(target.querySelector('label').innerText)
+                this.$refs.cmb1.currVal(this.c1Text)
+            },
+            c1DefaultItem (data){
+                const cmb1 = document.querySelector('div[data-id="cmb1"]');
+                const cmbItems = cmb1.querySelectorAll('li[data-item-index]');
+                const defaultIndex = data.itemIndex - 1;
+                if(defaultIndex < cmbItems.length){
+                    cmbItems[defaultIndex].click();
+                }
             }
         }
         ···
