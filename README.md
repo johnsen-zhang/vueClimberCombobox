@@ -12,7 +12,7 @@ search | Boolean | 是否支持模糊查询 | false
 defaultIndex | Number | 默认选中项 | 0
 
 # 函数说明
-函数名 | 参数列表 | 描述
+函数名 | 参数列表 | 描述
 :-: | :-: | :-:
 currVal | textVal | 设置文本框显示内容
 hideList | - | 隐藏下拉列表
